@@ -126,6 +126,7 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
+    <ChakraProvider>
       <Flex direction='column' height='100vh'>
         <Flex flex={1}>
           <Toolbox />
@@ -152,6 +153,7 @@ const HomePage: React.FC = () => {
         </Flex>
           Help
       </Flex>
+    </ChakraProvider>
   );
 };
 

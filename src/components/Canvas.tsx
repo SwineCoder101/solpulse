@@ -89,6 +89,7 @@ const Canvas: React.FC<CanvasProps> = ({
       ref={canvasRef}
       flex={1}
       height='100%'
+      width='100%'
       onDrop={onDrop}
       onDragOver={(event) => event.preventDefault()}
     >

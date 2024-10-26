@@ -22,7 +22,17 @@ const toolboxItems = [
 
 const Toolbox: React.FC = () => {
   return (
-    <Box width='30%' maxWidth='200px' bg='gray.100' p={4}>
+    <Box
+      width='200px'
+      bg='gray.100'
+      p={4}
+      position='fixed'
+      left={0}
+      top={0}
+      height='100vh'
+      overflowY='auto'
+      zIndex={1000}
+    >
       <VStack spacing={2} align='stretch'>
         <Text fontWeight='light' textAlign='left'>
           Drag items into canvas
