@@ -5,9 +5,12 @@ import PropertyPanel from '@/components/PropertyPanel';
 import Toolbox from '@/components/Toolbox';
 import { ToolboxItem } from '@/interfaces/ToolboxItem';
 import { initGA, logPageView } from '@/utils/analytics';
-import { Flex } from '@chakra-ui/react';
-import { ChakraProvider } from '@chakra-ui/react';
+import getAnchorIDL from '@/utils/getAnchorIDL';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
+import { useConnection } from '@solana/wallet-adapter-react';
 import React, { useCallback, useEffect, useState } from 'react';
+import { parseProgram, ProgramDTO } from '../../utils/idleParser';
+
 import {
     addEdge,
     applyEdgeChanges,
@@ -29,6 +32,10 @@ const HomePage: React.FC = () => {
   const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
   const [promptString, setPromptString] = useState<any>({});
   const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false);
+  const [programDto, setProgramDto] = useState<ProgramDTO>();
+
+//   const connection = useConnectionNetwork('devnet');
+    const {connection} = useConnection();
 
   useEffect(() => {
     initGA(GA_MEASUREMENT_ID);
@@ -123,7 +130,20 @@ const HomePage: React.FC = () => {
       setIsWalkthroughOpen(true);
       localStorage.setItem('hasSeenWalkthrough', 'true');
     }
+
+    const fetchIDL = async () => {
+
+      console.log('Connection: ', connection);
+      const idl = await getAnchorIDL(connection, 'Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok');
+
+      const parsedProgram = parseProgram(idl);
+      setProgramDto(parsedProgram);
+    };
+
+    fetchIDL();
   }, []);
+
+
 
   return (
     <ChakraProvider>
@@ -139,6 +159,9 @@ const HomePage: React.FC = () => {
             onSelectNode={handleSelectNode}
             onSelectEdge={handleSelectEdge}
             onAddNode={handleAddNode}
+            accounts={programDto?.data?.accounts || []}
+            instructions={programDto?.data?.instructions || []}
+            program={programDto || {}}
           />
           <PropertyPanel
             selectedNode={selectedNode}

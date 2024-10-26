@@ -10,6 +10,7 @@ pub mod basic {
         msg!("GM!");
         Ok(())
     }
+
 }
 
 #[derive(Accounts)]

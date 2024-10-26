@@ -1,6 +1,6 @@
 // src/components/Canvas.tsx
 
-import React, { useCallback, useRef, useMemo } from 'react';
+import React, { useCallback, useRef, useMemo, useEffect } from 'react';
 import ReactFlow, {
   Node,
   Edge,
@@ -12,6 +12,8 @@ import ReactFlow, {
 import { Box } from '@chakra-ui/react';
 import { createItem, getNodeTypes } from '../utils/itemFactory';
 import CustomEdge from './CustomEdge';
+import { create } from 'domain';
+import { AccountDTO, InstructionDTO, ProgramDTO } from '@/items/models';
 
 interface CanvasProps {
   nodes: Node[];
@@ -22,9 +24,12 @@ interface CanvasProps {
   onSelectNode: (node: Node | null) => void;
   onSelectEdge: (edge: Edge | null) => void;
   onAddNode: (node: Node) => void;
+  accounts: AccountDTO[];
+  instructions: InstructionDTO[];
+  program: ProgramDTO;
 }
 
-const edgeTypes = {
+  const edgeTypes = {
   solana: CustomEdge,
 };
 
@@ -37,11 +42,20 @@ const Canvas: React.FC<CanvasProps> = ({
   onSelectNode,
   onSelectEdge,
   onAddNode,
+  accounts,
+  instructions,
+  program,
 }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   // Memoize nodeTypes
   const nodeTypes: NodeTypes = useMemo(() => getNodeTypes(), []);
+
+  useEffect(() => {
+    createNode('program', { x: 200, y: 200 });
+    // createNode('instruction', { x: 200, y: 800 });
+    // createNode('program', { x: 200, y: 1000 });
+  },[]);
 
   const onDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
@@ -64,6 +78,14 @@ const Canvas: React.FC<CanvasProps> = ({
     },
     [onAddNode]
   );
+
+  const createNode = useCallback((type: string, position: { x: number; y: number }) => {
+    const newItem = createItem(type);
+    if (newItem) {
+      const newNode = newItem.toNode(position);
+      onAddNode(newNode);
+    }
+  }, [createItem, onAddNode]);
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
