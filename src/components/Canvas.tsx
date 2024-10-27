@@ -1,11 +1,11 @@
 import getAccountInfo from '@/utils/getAccountInfo';
 import getAnchorIDL from '@/utils/getAnchorIDL';
 import getCreatedAccounts from '@/utils/getCreatedAccounts';
-import { AccountDTO, InstructionDTO, ProgramDTO, TypeDTO, parseProgram } from '@/utils/idleParser';
+import { InstructionDTO, ProgramDTO, TypeDTO, parseProgram } from '@/utils/idleParser';
 import shortenAddress from '@/utils/shortenAddress';
 import { Box, Button, Flex, Input } from '@chakra-ui/react';
 import { useConnection } from '@solana/wallet-adapter-react';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import ReactFlow, { Background, Connection, Controls, Edge, MarkerType, Node, NodeTypes } from 'react-flow-renderer';
 import { createItem, getNodeTypes } from '../utils/itemFactory';
 import CustomEdge from './CustomEdge';
@@ -24,6 +24,7 @@ interface CanvasProps {
   onNewSetOfEdges: (edges: Edge[]) => void;
   programId: string;
   setProgramId: (programId: string) => void;
+  fullRelationship: boolean;
 }
 
 const edgeTypes = {
@@ -44,6 +45,7 @@ const Canvas: React.FC<CanvasProps> = ({
   onNewSetOfEdges,
   programId,
   setProgramId,
+  fullRelationship,
 }) => {
 
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -54,9 +56,10 @@ const Canvas: React.FC<CanvasProps> = ({
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value);
-    //Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok
     setProgramId(event.target.value);
   };
+
+  console.log('full relationship canvas',fullRelationship  );
 
   const handleDisplay = useCallback(async () => {
     const fetchIDL = async () => {
@@ -69,6 +72,7 @@ const Canvas: React.FC<CanvasProps> = ({
       const allAccounts = await getCreatedAccounts(connection, programId, programDto.data.accounts, programDto.data.types);
 
       console.log('allAccounts',allAccounts);
+      console.log('canvas fullRelationship',fullRelationship);
 
       console.log('account',info);
       return info;
@@ -84,6 +88,8 @@ const Canvas: React.FC<CanvasProps> = ({
 
     let nodesToDisplay: Node[] = [];
     let edgesToDisplay: Edge[] = [];
+
+    console.log('full relationship canvas',fullRelationship  );
 
     if (programDto) {
       onDeleteAll();
@@ -114,6 +120,9 @@ const Canvas: React.FC<CanvasProps> = ({
         };
         edgesToDisplay.push(newEdge);
       };
+
+
+      console.log('full relationship canvas',fullRelationship  );
 
 
       const programNodeId = createNode('program', origin, programDto.name || shortenAddress(programDto.data.address,),1);
@@ -150,10 +159,29 @@ const Canvas: React.FC<CanvasProps> = ({
         programNodeId && nodeIdToWire && createEdge(programNodeId, nodeIdToWire);
       });
 
+      console.log('full relationship canvas',fullRelationship  );
+
+
+      // combine instructions and accounts
+      if (fullRelationship) {
+        console.log('fullRelationship combing instructions and accounts');
+        instructions.forEach((instruction, index) => {
+          const instructionNode = nodesToDisplay.find((node) => node.data.item.name === instruction.name);
+          const accounts = instruction.accounts;
+          accounts.forEach((account) => {
+            const accountNode = nodesToDisplay.find((node) => node.data.item.name === account.name);
+            instructionNode && accountNode && createEdge(instructionNode.id, accountNode.id);
+          });
+        });
+      }
+
+
+
+
       onNewSetOfNodes(nodesToDisplay);
       onNewSetOfEdges(edgesToDisplay);
     }
-  }, [connection, programId, onNodesChange, onEdgesChange, onAddNode]);
+  }, [connection, programId, onNodesChange, onEdgesChange, onAddNode, fullRelationship]);
 
   const onDrop = useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
@@ -174,7 +202,7 @@ const Canvas: React.FC<CanvasProps> = ({
         }
       }
     },
-    [onAddNode]
+    [onAddNode, nodes.length]
   );
 
   const onNodeClick = useCallback(
@@ -190,6 +218,7 @@ const Canvas: React.FC<CanvasProps> = ({
     },
     [onSelectEdge]
   );
+  
 
   const onPaneClick = useCallback(() => {
     onSelectNode(null);

@@ -28,7 +28,6 @@ const HomePage: React.FC = () => {
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const [showComments, setShowComments] = useState(false);
   const [fullRelationship, setFullRelationship] = useState(false);
-
   const [programId, setProgramId] = useState<string>('');
 
   useEffect(() => {
@@ -133,20 +132,23 @@ const HomePage: React.FC = () => {
   };
 
   const handleToggleFullRelationship = () => {
+    console.log('fullRelationship', fullRelationship);  
     setFullRelationship(!fullRelationship);
   };
+
+    
 
   return (
     <ChakraProvider>
       <Flex direction='column' height='80vh' width='100vw'>
-        <Box zIndex={1} position='absolute' top={20} left={4} p={4} bg='white' borderRadius='md' shadow='md'>
+        <Box zIndex={10} position='absolute' top={20} left={4} p={4} bg='white' borderRadius='md' shadow='md'>
           <VStack spacing={4} align='stretch'>
             <Button colorScheme='blue' onClick={handleToggleComments}>
               {showComments ? 'Hide Comments' : 'Show Comments'}
             </Button>
             <FormControl display='flex' alignItems='center'>
               <FormLabel htmlFor='full-relationship' mb='0'>
-                Instruction Context
+                Full Relationship
               </FormLabel>
               <Switch id='full-relationship' isChecked={fullRelationship} onChange={handleToggleFullRelationship} />
             </FormControl>
@@ -167,6 +169,7 @@ const HomePage: React.FC = () => {
             onNewSetOfEdges={handleNewSetOfEdges}
             programId={programId}
             setProgramId={setProgramId}
+            fullRelationship={fullRelationship}
           />
           <PropertyPanel
             selectedNode={selectedNode}
