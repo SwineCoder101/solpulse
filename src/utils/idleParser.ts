@@ -66,6 +66,7 @@ export interface DataDTO {
 }
 
 export interface ProgramDTO {
+    name?: string;
     address: string;
     data: DataDTO;
     executable: boolean;
@@ -77,7 +78,12 @@ export interface ProgramDTO {
 
 // Create a parser function
 export function parseProgram(json: any): ProgramDTO {
+
+
+    console.log("JSON IDL : ", json);
+
     return {
+        name: json?.data?.metadata?.name ?? '',
         address: json?.address ?? '',
         data: {
             address: json?.data?.address ?? '',

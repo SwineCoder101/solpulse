@@ -2,14 +2,10 @@
 
 import Canvas from '@/components/Canvas';
 import PropertyPanel from '@/components/PropertyPanel';
-import Toolbox from '@/components/Toolbox';
 import { ToolboxItem } from '@/interfaces/ToolboxItem';
 import { initGA, logPageView } from '@/utils/analytics';
-import getAnchorIDL from '@/utils/getAnchorIDL';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
-import { useConnection } from '@solana/wallet-adapter-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import { parseProgram, ProgramDTO } from '../../utils/idleParser';
 
 import {
     addEdge,
@@ -27,20 +23,18 @@ const GA_MEASUREMENT_ID = 'G-L5P6STB24E';
 const HomePage: React.FC = () => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+  
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
-  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
-  const [promptString, setPromptString] = useState<any>({});
-  const [isWalkthroughOpen, setIsWalkthroughOpen] = useState(false);
-  const [programDto, setProgramDto] = useState<ProgramDTO>();
 
-//   const connection = useConnectionNetwork('devnet');
-    const {connection} = useConnection();
 
   useEffect(() => {
     initGA(GA_MEASUREMENT_ID);
     logPageView();
   }, []);
+
+  useEffect(() => {
+  }, [nodes]);
 
   const onNodesChange = useCallback((changes: any) => {
     setNodes((nds) => applyNodeChanges(changes, nds));
@@ -62,6 +56,13 @@ const HomePage: React.FC = () => {
   const handleSelectEdge = (edge: Edge | null) => {
     setSelectedEdge(edge);
     setSelectedNode(null);
+  };
+
+  const handleDeleteAll = () => {
+    setNodes([]);
+    setEdges([]);
+    setSelectedNode(null);
+    setSelectedEdge(null);
   };
 
   const handleDeleteNode = (id: string) => {
@@ -116,40 +117,20 @@ const HomePage: React.FC = () => {
     setNodes((nds) => [...nds, newNode]);
   };
 
-  const handleCloseWalkthrough = () => {
-    setIsWalkthroughOpen(false);
+  const handleNewSetOfNodes = (newNodes: Node[]) => {
+    console.log('newNodes', newNodes);  
+    setNodes(newNodes);
   };
 
-  const handleOpenWalkthrough = () => {
-    setIsWalkthroughOpen(true);
+  const handleNewSetOfEdges = (newEdges: Edge[]) => { 
+    console.log('newEdges', newEdges);
+    setEdges(newEdges);
   };
-
-  useEffect(() => {
-    const hasSeenWalkthrough = localStorage.getItem('hasSeenWalkthrough');
-    if (!hasSeenWalkthrough) {
-      setIsWalkthroughOpen(true);
-      localStorage.setItem('hasSeenWalkthrough', 'true');
-    }
-
-    const fetchIDL = async () => {
-
-      console.log('Connection: ', connection);
-      const idl = await getAnchorIDL(connection, 'Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok');
-
-      const parsedProgram = parseProgram(idl);
-      setProgramDto(parsedProgram);
-    };
-
-    fetchIDL();
-  }, []);
-
-
 
   return (
     <ChakraProvider>
       <Flex direction='column' height='100vh'>
         <Flex flex={1}>
-          <Toolbox />
           <Canvas
             nodes={nodes}
             edges={edges}
@@ -159,9 +140,9 @@ const HomePage: React.FC = () => {
             onSelectNode={handleSelectNode}
             onSelectEdge={handleSelectEdge}
             onAddNode={handleAddNode}
-            accounts={programDto?.data?.accounts || []}
-            instructions={programDto?.data?.instructions || []}
-            program={programDto || {}}
+            onDeleteAll={handleDeleteAll}   
+            onNewSetOfNodes={handleNewSetOfNodes}
+            onNewSetOfEdges={handleNewSetOfEdges}
           />
           <PropertyPanel
             selectedNode={selectedNode}

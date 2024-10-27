@@ -8,20 +8,20 @@ import { Program } from '../items/Program';
 import { memo } from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 
-export function createItem(type: string): ToolboxItem | null {
+export function createItem(type: string, index: number,name? :string): ToolboxItem | null {
   switch (type) {
     case 'account':
-      return new Account(`account-${Date.now()}`, 'New Account', '', '');
+      return new Account(`account-${index}`, name || 'New Account', '', '');
     case 'instruction':
       return new Instruction(
-        `instruction-${Date.now()}`,
-        'New Instruction',
+        `instruction-${index}`,
+        name || 'New Instruction',
         '',
         '',
         ''
       );
     case 'program':
-      return new Program(`program-${Date.now()}`, 'New Program', '');
+      return new Program(`program-${index}`, name || 'New Program', '');
     default:
       return null;
   }
