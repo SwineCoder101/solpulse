@@ -7,13 +7,13 @@ import { Instruction } from '../items/Instruction';
 import { Program } from '../items/Program';
 import { memo } from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
-import { AccountDTO, formatAccountContent, formatInstructionContent, InstructionDTO } from './idleParser';
+import { AccountDTO, formatAccountContent, formatInstructionContent, formatTypeContent, InstructionDTO, TypeDTO } from './idleParser';
 
-export function createItem(type: string, index: number,name? :string, entities?: InstructionDTO[] | AccountDTO[]): ToolboxItem | null {
+export function createItem(type: string, index: number,name? :string, entities?: InstructionDTO[] | TypeDTO[]): ToolboxItem | null {
   let content = ''; 
   switch (type) {
     case 'account':
-      content = formatAccountContent(entities as AccountDTO[]);
+      content = formatTypeContent(entities as TypeDTO[]);
       return new Account(`account-${index}`, name || 'New Account', '', content || '');
     case 'instruction':
       content = formatInstructionContent(entities as InstructionDTO[]);

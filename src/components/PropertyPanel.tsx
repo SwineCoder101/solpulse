@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, VStack, Text, Input, Button } from '@chakra-ui/react';
 import { Node, Edge } from 'react-flow-renderer';
 import { ToolboxItem } from '../interfaces/ToolboxItem';
+import useCommentCache from '@/hooks/useCommentCache';
+import { program } from '@coral-xyz/anchor/dist/cjs/native/system';
 
 interface PropertyPanelProps {
   selectedNode: Node | null;
@@ -14,6 +16,7 @@ interface PropertyPanelProps {
   onUpdateEdge: (edge: Edge) => void;
   programs: Node[];
   nodes: Node[];
+  programId: string;
 }
 
 const PropertyPanel: React.FC<PropertyPanelProps> = ({
@@ -25,9 +28,11 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   onUpdateEdge,
   programs,
   nodes,
+  programId,
 }) => {
   const [localValues, setLocalValues] = useState<any>({});
   const [edgeLabel, setEdgeLabel] = useState('');
+  const {addComment} = useCommentCache(programId);
 
   useEffect(() => {
     if (selectedNode) {
@@ -58,6 +63,8 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
           localValues,
         },
       };
+
+      addComment(localValues.aiInstruction,localValues.name);
 
       onUpdateNode(updatedNode);
     } else if (selectedEdge) {
@@ -120,3 +127,5 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
 };
 
 export default PropertyPanel;
+
+

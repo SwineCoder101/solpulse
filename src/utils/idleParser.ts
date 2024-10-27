@@ -168,7 +168,7 @@ export const formatInstructionContent = (instructions: InstructionDTO[]): string
     return instructions.map((instruction) => {
       const accounts = instruction.accounts.map(account => `  - ${account.name} (Writable: ${account.writable}, Signer: ${account.signer})`).join('\n');
       const args = instruction.args.map(arg => `  - ${arg.name}: ${typeof arg.type === 'string' ? arg.type : 'vec<${arg.type.vec}> '}`).join('\n');
-      return `Instruction: ${instruction.name}\nAccounts:\n${accounts}\nArgs:\n${args}\n`;
+      return `Accounts:\n${accounts}\nArgs:\n${args}\n`;
     }).join('\n\n');
   };
   
@@ -176,6 +176,14 @@ export const formatInstructionContent = (instructions: InstructionDTO[]): string
   export const formatAccountContent = (accounts: AccountDTO[]): string => {
     return accounts.map((account) => {
       const pdaInfo = account.pda ? `PDA: Yes\nSeeds: ${account.pda.seeds.map(seed => `  - Kind: ${seed.kind}, Path: ${seed.path ?? 'N/A'}, Value: ${seed.value?.join(', ') ?? 'N/A'}`).join('\n')}` : 'PDA: No';
-      return `Account: ${account.name}\nWritable: ${account.writable}\nSigner: ${account.signer}\n${pdaInfo}\n`;
+      return `Writable: ${account.writable}\nSigner: ${account.signer}\n${pdaInfo}\n`;
+    }).join('\n\n');
+};
+
+// Utility function to generate a formatted string for type content
+export const formatTypeContent = (types: TypeDTO[]): string => {
+    return types.map((type) => {
+      const fields = type.type.fields.map(field => `  - ${field.name}: ${field.type}`).join('\n');
+      return `Fields:\n${fields}\n`;
     }).join('\n\n');
 };

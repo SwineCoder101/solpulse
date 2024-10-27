@@ -2,9 +2,10 @@
 
 import Canvas from '@/components/Canvas';
 import PropertyPanel from '@/components/PropertyPanel';
+import CommentsPanel from '@/components/CommentsPanel';
 import { ToolboxItem } from '@/interfaces/ToolboxItem';
 import { initGA, logPageView } from '@/utils/analytics';
-import { ChakraProvider, Flex } from '@chakra-ui/react';
+import { ChakraProvider, Flex, Box, Button, VStack, Switch, FormControl, FormLabel } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import {
@@ -23,10 +24,12 @@ const GA_MEASUREMENT_ID = 'G-L5P6STB24E';
 const HomePage: React.FC = () => {
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
-  
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
+  const [showComments, setShowComments] = useState(false);
+  const [fullRelationship, setFullRelationship] = useState(false);
 
+  const [programId, setProgramId] = useState<string>('');
 
   useEffect(() => {
     initGA(GA_MEASUREMENT_ID);
@@ -125,9 +128,30 @@ const HomePage: React.FC = () => {
     setEdges(newEdges);
   };
 
+  const handleToggleComments = () => {
+    setShowComments(!showComments);
+  };
+
+  const handleToggleFullRelationship = () => {
+    setFullRelationship(!fullRelationship);
+  };
+
   return (
     <ChakraProvider>
       <Flex direction='column' height='80vh' width='100vw'>
+        <Box zIndex={1} position='absolute' top={20} left={4} p={4} bg='white' borderRadius='md' shadow='md'>
+          <VStack spacing={4} align='stretch'>
+            <Button colorScheme='blue' onClick={handleToggleComments}>
+              {showComments ? 'Hide Comments' : 'Show Comments'}
+            </Button>
+            <FormControl display='flex' alignItems='center'>
+              <FormLabel htmlFor='full-relationship' mb='0'>
+                Instruction Context
+              </FormLabel>
+              <Switch id='full-relationship' isChecked={fullRelationship} onChange={handleToggleFullRelationship} />
+            </FormControl>
+          </VStack>
+        </Box>
         <Flex height='100%' width='100%'>
           <Canvas
             nodes={nodes}
@@ -141,6 +165,8 @@ const HomePage: React.FC = () => {
             onDeleteAll={handleDeleteAll}   
             onNewSetOfNodes={handleNewSetOfNodes}
             onNewSetOfEdges={handleNewSetOfEdges}
+            programId={programId}
+            setProgramId={setProgramId}
           />
           <PropertyPanel
             selectedNode={selectedNode}
@@ -151,7 +177,9 @@ const HomePage: React.FC = () => {
             onUpdateEdge={handleUpdateEdge}
             programs={nodes.filter((node) => node.type === 'program')}
             nodes={nodes}
+            programId={programId}
           />
+          {showComments && <CommentsPanel programId={programId || ''} />}
         </Flex>
       </Flex>
     </ChakraProvider>

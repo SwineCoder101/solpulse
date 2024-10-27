@@ -85,14 +85,10 @@ export class Account implements ToolboxItem {
           onChange={(e) => onChange('description', e.target.value)}
         />
         <Textarea
+          height={200}
           placeholder='Data struct, eg: {owner: PublicKey, expired_at: u64}'
           value={values.json || ''}
           onChange={(e) => onChange('json', e.target.value)}
-        />
-        <Textarea
-          placeholder='Feel free to comment and review this instruction for others to understand eg. This instruction only accepts spl token 2022'
-          value={values.aiInstruction || ''}
-          onChange={(e) => onChange('comment', e.target.value)}
         />
         <Select
           placeholder='Select Program'

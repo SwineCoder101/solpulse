@@ -1,7 +1,7 @@
 import getAccountInfo from '@/utils/getAccountInfo';
 import getAnchorIDL from '@/utils/getAnchorIDL';
 import getCreatedAccounts from '@/utils/getCreatedAccounts';
-import { AccountDTO, InstructionDTO, ProgramDTO, parseProgram } from '@/utils/idleParser';
+import { AccountDTO, InstructionDTO, ProgramDTO, TypeDTO, parseProgram } from '@/utils/idleParser';
 import shortenAddress from '@/utils/shortenAddress';
 import { Box, Button, Flex, Input } from '@chakra-ui/react';
 import { useConnection } from '@solana/wallet-adapter-react';
@@ -22,6 +22,8 @@ interface CanvasProps {
   onDeleteAll: () => void;
   onNewSetOfNodes: (nodes: Node[]) => void;
   onNewSetOfEdges: (edges: Edge[]) => void;
+  programId: string;
+  setProgramId: (programId: string) => void;
 }
 
 const edgeTypes = {
@@ -40,8 +42,9 @@ const Canvas: React.FC<CanvasProps> = ({
   onDeleteAll,
   onNewSetOfNodes,
   onNewSetOfEdges,
+  programId,
+  setProgramId,
 }) => {
-  const [programId, setProgramId] = useState<string>('');
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const { connection } = useConnection();
@@ -85,7 +88,7 @@ const Canvas: React.FC<CanvasProps> = ({
     if (programDto) {
       onDeleteAll();
 
-      const createNode = (type: string, position: { x: number; y: number }, name: string, index: number, entities?: InstructionDTO[] | AccountDTO[]): string | undefined => {
+      const createNode = (type: string, position: { x: number; y: number }, name: string, index: number, entities?: InstructionDTO[] | TypeDTO[]): string | undefined => {
         const newItem = createItem(type, index, name, entities);
         if (newItem) {
           const newNode = newItem.toNode(position);
@@ -121,13 +124,20 @@ const Canvas: React.FC<CanvasProps> = ({
       // Create new nodes for accounts and instructions
       let nodeIdToWire;
 
-
       const instructions = programDto.data.instructions;
       const accounts = programDto.data.accounts;
+      const types = programDto.data.types;
 
-      accounts.forEach((account, index) => {
+      const accounttypes = accounts.map((account, index) => {
+        return {
+          account,
+          type: types[index]
+        }
+      });
+
+      accounttypes.forEach((acct, index) => {
         nodeIdToWire = createNode('account', { x: offsetColumn + 110, y: origin.y + index * 
-        spaceBetweenNodes }, account.name, index,[account]);
+        spaceBetweenNodes }, acct.account.name, index,[acct.type]);
 
         programNodeId && nodeIdToWire && createEdge(programNodeId, nodeIdToWire);
 
@@ -195,16 +205,17 @@ const Canvas: React.FC<CanvasProps> = ({
       onDrop={onDrop}
       onDragOver={(event) => event.preventDefault()}
     >
-      <Flex mb={4} p={2}>
+    <Flex justifyContent='center' alignItems='center'>
+      <Flex mb={4} p={2} alignItems='center'>
         <Input
           placeholder='Enter Program ID'
           value={programId}
           onChange={handleInputChange}
           width='300px'
-          marginLeft='216px' // Ensure it appears after the edge of the Toolbox
         />
-        <Button onClick={handleDisplay}>Display</Button>
+        <Button onClick={handleDisplay} ml={2}>Display</Button>
       </Flex>
+    </Flex>
       <ReactFlow
         nodes={nodes}
         edges={edges}
