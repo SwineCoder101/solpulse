@@ -132,7 +132,13 @@ If you have any questions or feedback, feel free to reach out:
 
 We are grateful to the Solana SuperteamUK for their continuous support and contributions. SolPulse is built with the aim of making Solana development more transparent and productive for everyone.
 
+https://solpulse-vn61-q1m95uzwx-swinecoder101s-projects.vercel.app/dashboard
+
 ## Inspiration
 
 SolPulse was inspired by tools like [Solana IDE](https://solana-ide.netlify.app/), an interactive tool for creating programs using AI, and [Solana File Explorer](https://solana-file-explorer.netlify.app/), a developer tool for viewing program, IDL, and account information.
 
+
+website: https://solpulse-vn61.vercel.app/
+
+Video: https://www.youtube.com/watch?v=qUKtxisgd_A 
