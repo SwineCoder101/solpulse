@@ -70,13 +70,14 @@ const Canvas: React.FC<CanvasProps> = ({
     if (programDto) {
       onDeleteAll();
 
-      const createNode = (type: string, position: { x: number; y: number }, name: string, index: number) => {
+      const createNode = (type: string, position: { x: number; y: number }, name: string, index: number): string | undefined => {
         const newItem = createItem(type, index, name);
         if (newItem) {
           const newNode = newItem.toNode(position);
           nodesToDisplay.push(newNode);
           return newItem.id
         }
+        return undefined;
       };
 
       const createEdge = (source: string, target: string) => {
