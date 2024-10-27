@@ -1,5 +1,6 @@
-// NOTE: copy the whole file from this url
-//https://github.com/acheroncrypto/anchor/blob/be8764b8a827c87b347b7af0906bdbf0bd921a48/ts/packages/anchor/src/coder/borsh/idl.ts#L71
+// @ts-ignore
+// @ts-nocheck
+
 import camelCase from 'camelcase';
 import { Layout } from 'buffer-layout';
 import * as borsh from '@coral-xyz/borsh';

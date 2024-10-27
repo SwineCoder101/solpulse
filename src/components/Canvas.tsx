@@ -83,7 +83,7 @@ const Canvas: React.FC<CanvasProps> = ({
     
     const programDto: ProgramDTO = await fetchIDL();
     
-    const accountInfo = await fetchAccountInfo(programId,programDto);
+    // const accountInfo = await fetchAccountInfo(programId,programDto);
 
 
     let nodesToDisplay: Node[] = [];
@@ -225,6 +225,17 @@ const Canvas: React.FC<CanvasProps> = ({
     onSelectEdge(null);
   }, [onSelectNode, onSelectEdge]);
 
+
+  const handlePuppet = () => {
+    setProgramId('79v3xvzmEcbuAhp5NDkJRNDNR8a6EMimRTSD5HgC57kf');
+    handleDisplay();
+  };
+
+  const handlePhanuel = () => {
+    setProgramId('Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok');
+    handleDisplay();
+  };
+
   return (
     <Box
       ref={canvasRef}
@@ -243,6 +254,8 @@ const Canvas: React.FC<CanvasProps> = ({
           width='300px'
         />
         <Button onClick={handleDisplay} ml={2}>Display</Button>
+        <Button onClick={handlePuppet} ml={2}>Puppet</Button>
+        <Button onClick={handlePhanuel} ml={2}>Phanuel</Button>
       </Flex>
     </Flex>
       <ReactFlow
