@@ -94,17 +94,18 @@ export class Instruction implements ToolboxItem {
           onChange={(e) => onChange('name', e.target.value)}
         />
         <Textarea
-          placeholder='Description, e.g: This function let user deposit token'
+          placeholder='Description, e.g: This function let user deposit token, access: ideally this should be described by the developer who deployed please connect your wallet address'
           value={values.description || ''}
           onChange={(e) => onChange('description', e.target.value)}
         />
         <Textarea
+          height={230}
           placeholder='Parameters, e.g: amount: u64, user: PublicKey, token_mint: PublicKey'
           value={values.parameters || ''}
           onChange={(e) => onChange('parameters', e.target.value)}
         />
         <Textarea
-          placeholder='Step by step instruction to AI, e.g: Check if user is whitelisted, then transfer let user deposit token"'
+          placeholder='Feel free to comment and review this instruction for others to understand eg. This instruction only accepts spl token 2022'
           value={values.aiInstruction || ''}
           onChange={(e) => onChange('aiInstruction', e.target.value)}
         />

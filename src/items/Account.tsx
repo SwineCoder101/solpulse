@@ -80,7 +80,7 @@ export class Account implements ToolboxItem {
           onChange={(e) => onChange('name', e.target.value)}
         />
         <Textarea
-          placeholder='Description, e.g: This PDA account is used for storing vault information'
+          placeholder='Description, e.g: This PDA account is used for storing vault information, access: ideally this should be described by the developer who deployed please connect your wallet address'
           value={values.description || ''}
           onChange={(e) => onChange('description', e.target.value)}
         />
@@ -88,6 +88,11 @@ export class Account implements ToolboxItem {
           placeholder='Data struct, eg: {owner: PublicKey, expired_at: u64}'
           value={values.json || ''}
           onChange={(e) => onChange('json', e.target.value)}
+        />
+        <Textarea
+          placeholder='Feel free to comment and review this instruction for others to understand eg. This instruction only accepts spl token 2022'
+          value={values.aiInstruction || ''}
+          onChange={(e) => onChange('comment', e.target.value)}
         />
         <Select
           placeholder='Select Program'

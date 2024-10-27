@@ -79,7 +79,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   const fromNode = nodes.find((n) => n.id === selectedEdge?.source);
   const toNode = nodes.find((n) => n.id === selectedEdge?.target);
   return (
-    <Box width='300px' bg='gray.100' p={4}>
+    <Box width='900px' bg='gray.100' p={4} height={['100%', '80vh']}>
       <VStack spacing={4} align='stretch'>
         {selectedNode && (
           <>
@@ -113,9 +113,6 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
         )}
         <Button colorScheme='blue' onClick={handleSave}>
           Save
-        </Button>
-        <Button colorScheme='red' onClick={handleDelete}>
-          Delete
         </Button>
       </VStack>
     </Box>

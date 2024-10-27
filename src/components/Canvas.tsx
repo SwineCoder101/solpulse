@@ -1,13 +1,14 @@
-import React, { useCallback, useRef, useMemo, useState } from 'react';
-import ReactFlow, { Node, Edge, Connection, Controls, Background, NodeTypes, MarkerType } from 'react-flow-renderer';
+import getAccountInfo from '@/utils/getAccountInfo';
+import getAnchorIDL from '@/utils/getAnchorIDL';
+import getCreatedAccounts from '@/utils/getCreatedAccounts';
+import { AccountDTO, InstructionDTO, ProgramDTO, parseProgram } from '@/utils/idleParser';
+import shortenAddress from '@/utils/shortenAddress';
 import { Box, Button, Flex, Input } from '@chakra-ui/react';
+import { useConnection } from '@solana/wallet-adapter-react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import ReactFlow, { Background, Connection, Controls, Edge, MarkerType, Node, NodeTypes } from 'react-flow-renderer';
 import { createItem, getNodeTypes } from '../utils/itemFactory';
 import CustomEdge from './CustomEdge';
-import { ProgramDTO, parseProgram } from '@/utils/idleParser';
-import getAnchorIDL from '@/utils/getAnchorIDL';
-import { useConnection } from '@solana/wallet-adapter-react';
-import shortenAddress from '@/utils/shortenAddress';
-import { on } from 'events';
 
 interface CanvasProps {
   nodes: Node[];
@@ -60,18 +61,32 @@ const Canvas: React.FC<CanvasProps> = ({
       const idl = await getAnchorIDL(connection, programId);
       return parseProgram(idl);
     };
+    const fetchAccountInfo = async (address: string, programDto : ProgramDTO) => {
+      const info = await getAccountInfo(connection, address);
+      const allAccounts = await getCreatedAccounts(connection, programId, programDto.data.accounts, programDto.data.types);
 
+      console.log('allAccounts',allAccounts);
+
+      console.log('account',info);
+      return info;
+    }
+
+    
     const origin = {x: 20, y: 20};
-
+    
     const programDto: ProgramDTO = await fetchIDL();
+    
+    const accountInfo = await fetchAccountInfo(programId,programDto);
+
+
     let nodesToDisplay: Node[] = [];
     let edgesToDisplay: Edge[] = [];
 
     if (programDto) {
       onDeleteAll();
 
-      const createNode = (type: string, position: { x: number; y: number }, name: string, index: number): string | undefined => {
-        const newItem = createItem(type, index, name);
+      const createNode = (type: string, position: { x: number; y: number }, name: string, index: number, entities?: InstructionDTO[] | AccountDTO[]): string | undefined => {
+        const newItem = createItem(type, index, name, entities);
         if (newItem) {
           const newNode = newItem.toNode(position);
           nodesToDisplay.push(newNode);
@@ -105,16 +120,21 @@ const Canvas: React.FC<CanvasProps> = ({
 
       // Create new nodes for accounts and instructions
       let nodeIdToWire;
-      programDto.data.accounts.forEach((account, index) => {
+
+
+      const instructions = programDto.data.instructions;
+      const accounts = programDto.data.accounts;
+
+      accounts.forEach((account, index) => {
         nodeIdToWire = createNode('account', { x: offsetColumn + 110, y: origin.y + index * 
-        spaceBetweenNodes }, account.name, index);
+        spaceBetweenNodes }, account.name, index,[account]);
 
         programNodeId && nodeIdToWire && createEdge(programNodeId, nodeIdToWire);
 
       });
 
-      programDto.data.instructions.forEach((instruction, index) => {
-        nodeIdToWire = createNode('instruction', { x: offsetColumn + 300, y: origin.y + index * spaceBetweenNodes}, instruction.name, index);
+      instructions.forEach((instruction, index) => {
+        nodeIdToWire = createNode('instruction', { x: offsetColumn + 300, y: origin.y + index * spaceBetweenNodes}, instruction.name, index, [instruction]);
 
         // Wire the nodes
         programNodeId && nodeIdToWire && createEdge(programNodeId, nodeIdToWire);
@@ -172,8 +192,6 @@ const Canvas: React.FC<CanvasProps> = ({
       flex={1}
       height='100%'
       width='100%'
-      border='1px solid'
-      borderColor='gray.300'
       onDrop={onDrop}
       onDragOver={(event) => event.preventDefault()}
     >

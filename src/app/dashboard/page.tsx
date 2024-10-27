@@ -118,19 +118,17 @@ const HomePage: React.FC = () => {
   };
 
   const handleNewSetOfNodes = (newNodes: Node[]) => {
-    console.log('newNodes', newNodes);  
     setNodes(newNodes);
   };
 
   const handleNewSetOfEdges = (newEdges: Edge[]) => { 
-    console.log('newEdges', newEdges);
     setEdges(newEdges);
   };
 
   return (
     <ChakraProvider>
-      <Flex direction='column' height='100vh'>
-        <Flex flex={1}>
+      <Flex direction='column' height='80vh' width='100vw'>
+        <Flex height='100%' width='100%'>
           <Canvas
             nodes={nodes}
             edges={edges}
@@ -155,7 +153,6 @@ const HomePage: React.FC = () => {
             nodes={nodes}
           />
         </Flex>
-          Help
       </Flex>
     </ChakraProvider>
   );
