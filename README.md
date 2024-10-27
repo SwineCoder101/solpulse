@@ -83,25 +83,26 @@ SolPulse is built for developers working with Solana smart contracts. Use the da
 - **Visualize**: See the entire architecture of your deployed programs.
 - **Debug**: Identify issues by analyzing how different accounts and instructions interact.
 - **Optimize**: Use the detailed insights provided to optimize program performance.
+- **Collaborate**: Help the community build and knowledge share ideas/concepts
+  
 
 ## Demo
 
 Below are some screenshots of SolPulse in action:
 
 ### Dashboard Overview
-![Dashboard Overview](images/dashboard_overview.png)
+![Dashboard Overview](images/instruction-comments-puppet.png)
 
 ### Program Details
-![Program Details](images/program_details.png)
-
-### Real-time Updates
-![Real-time Updates](images/real_time_updates.png)
+![Program Details](images/instruction-phanuel.png)
 
 These images provide a glimpse into the intuitive interface that helps developers visualize and manage their Solana programs.
 
 ## Technologies Used
 
 - **Solana Blockchain**: To access on-chain data and visualize the deployed programs.
+- **Helius RPC/WSS**: To access realtime events and rpc methods
+- **Anchor**: To deploy programs and publish IDLs
 - **React**: For building the user interface.
 - **Chakra UI**: To provide a modern, responsive design system for the dashboard.
 - **React Flow Renderer**: For the graph-based visualization of programs and their relationships.
@@ -129,7 +130,7 @@ If you have any questions or feedback, feel free to reach out:
 
 ## Acknowledgments
 
-We are grateful to the Solana developer community for their continuous support and contributions. SolPulse is built with the aim of making Solana development more transparent and productive for everyone.
+We are grateful to the Solana SuperteamUK for their continuous support and contributions. SolPulse is built with the aim of making Solana development more transparent and productive for everyone.
 
 ## Inspiration
 
